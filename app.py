@@ -1,31 +1,22 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
 import joblib
-import sklearn
+import app
 
-
-print(f"✅ Scikit-Learn version in Streamlit Cloud: {sklearn.__version__}")
-
-# Load the retrained model
-import os
-model_path = os.path.join(os.path.dirname(__file__), "diabetes_rf_model.pkl")
-model = joblib.load(model_path)
-
-
-
-
+# Load the trained Random Forest model
+model = joblib.load("diabetes_rf_model.pkl")
 
 # Define function for prediction
 def predict_diabetes(inputs):
     # Convert user inputs into a NumPy array
     input_array = np.array(inputs).reshape(1, -1)
-
+    
     # Make prediction
     prediction = model.predict(input_array)
-
+    
     # Return result
     return "Diabetes Detected" if prediction[0] == 1 else "No Diabetes Detected"
-
 
 # Streamlit UI
 st.title("🩺 Early Diabetes Prediction App")
@@ -68,8 +59,8 @@ alopecia = 1 if alopecia == "Yes" else 0
 obesity = 1 if obesity == "Yes" else 0
 
 # Convert inputs to a list
-user_inputs = [age, gender, polyuria, polydipsia, sudden_weight_loss, weakness, polyphagia,
-               genital_thrush, visual_blurring, itching, irritability, delayed_healing,
+user_inputs = [age, gender, polyuria, polydipsia, sudden_weight_loss, weakness, polyphagia, 
+               genital_thrush, visual_blurring, itching, irritability, delayed_healing, 
                partial_paresis, muscle_stiffness, alopecia, obesity]
 
 # Prediction Button
