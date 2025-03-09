@@ -1,22 +1,24 @@
 import streamlit as st
 import numpy as np
-import joblib
+import pickle
 import os
 
 # Load the trained Random Forest model
-model_path = "diabetes_rf_model.pkl"
+model_path = "diabetes_rf_model_fixed.pkl"
 
 if os.path.exists(model_path):
     try:
-        model = joblib.load(model_path)
+        # Load the model using pickle
+        with open(model_path, "rb") as f:
+            model = pickle.load(f)
     except Exception as e:
         st.error(f"Error loading the model: {e}")
         st.stop()
 else:
-    st.error("Model file not found! Please check 'diabetes_rf_model.pkl'.")
+    st.error("Model file not found! Please check 'diabetes_rf_model_fixed.pkl'.")
     st.stop()
 
-# Ensure model is properly fitted
+# Ensure model is properly loaded
 if not hasattr(model, "predict"):
     st.error("Model is not properly loaded or trained. Please check the model file.")
     st.stop()
