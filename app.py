@@ -1,21 +1,34 @@
 import streamlit as st
 import numpy as np
-import pandas as pd
 import joblib
-import app
+import os
 
 # Load the trained Random Forest model
-model = joblib.load("diabetes_rf_model.pkl")
+model_path = "diabetes_rf_model.pkl"
+
+if os.path.exists(model_path):
+    try:
+        model = joblib.load(model_path)
+    except Exception as e:
+        st.error(f"Error loading the model: {e}")
+        st.stop()
+else:
+    st.error("Model file not found! Please check 'diabetes_rf_model.pkl'.")
+    st.stop()
+
+# Ensure model is properly fitted
+if not hasattr(model, "predict"):
+    st.error("Model is not properly loaded or trained. Please check the model file.")
+    st.stop()
 
 # Define function for prediction
 def predict_diabetes(inputs):
-    # Convert user inputs into a NumPy array
     input_array = np.array(inputs).reshape(1, -1)
     
-    # Make prediction
+    # Debugging: Print input shape
+    st.write(f"Input shape: {input_array.shape}")
+
     prediction = model.predict(input_array)
-    
-    # Return result
     return "Diabetes Detected" if prediction[0] == 1 else "No Diabetes Detected"
 
 # Streamlit UI
@@ -64,6 +77,6 @@ user_inputs = [age, gender, polyuria, polydipsia, sudden_weight_loss, weakness, 
                partial_paresis, muscle_stiffness, alopecia, obesity]
 
 # Prediction Button
-if st.sidebar.button("Predict"):
+if st.button("🔍 Predict Diabetes"):
     result = predict_diabetes(user_inputs)
     st.success(f"🩺 Prediction Result: {result}")
