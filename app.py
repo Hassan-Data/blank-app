@@ -3,19 +3,25 @@ import numpy as np
 import pickle
 import os
 
-# Load the trained Random Forest model
-model_path = "diabetes_rf_model_fixed.pkl"
+model_path = "diabetes_rf_model_fixed2.pkl"
 
-if os.path.exists(model_path):
-    try:
-        # Load the model using pickle
-        with open(model_path, "rb") as f:
-            model = pickle.load(f)
-    except Exception as e:
-        st.error(f"Error loading the model: {e}")
-        st.stop()
-else:
-    st.error("Model file not found! Please check 'diabetes_rf_model_fixed.pkl'.")
+# Ensure model file exists before loading
+if not os.path.exists(model_path):
+    st.error(f"Model file '{model_path}' not found! Please check the file path.")
+    st.stop()
+
+# Load model safely
+try:
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
+
+    if not hasattr(model, "predict"):
+        raise ValueError("Loaded model is not trained properly.")
+    
+    st.success("✅ Model loaded successfully!")
+
+except Exception as e:
+    st.error(f"Error loading model: {e}")
     st.stop()
 
 # Ensure model is properly loaded
