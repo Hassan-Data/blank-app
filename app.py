@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 import os
 
-model_path = "diabetes_rf_model_fixed2.pkl"
+model_path = "diabetes_rf_model_fixedn.pkl"
 
 # Ensure model file exists before loading
 if not os.path.exists(model_path):
