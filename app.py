@@ -6,7 +6,10 @@ import sklearn
 print(f"Scikit-learn version: {sklearn.__version__}")
 
 # Load the retrained model
-model = joblib.load(r"C:\Users\hassa\Downloads\diabetes_rf_model.pkl", mmap_mode='r')
+import os
+model_path = os.path.join(os.path.dirname(__file__), "diabetes_rf_model.pkl")
+model = joblib.load(model_path)
+
 
 
 
