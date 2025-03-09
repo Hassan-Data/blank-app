@@ -3,7 +3,8 @@ import numpy as np
 import joblib
 import sklearn
 
-print(f"Scikit-learn version: {sklearn.__version__}")
+
+print(f"✅ Scikit-Learn version in Streamlit Cloud: {sklearn.__version__}")
 
 # Load the retrained model
 import os
