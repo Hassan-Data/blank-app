@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 import os
 
-model_path = "diabetes_rf_model_fixedn.pkl"
+model_path = "diabetes_rf_model_fixed.pkl"
 
 # Ensure model file exists before loading
 if not os.path.exists(model_path):
@@ -12,7 +12,7 @@ if not os.path.exists(model_path):
 
 # Load the model safely
 try:
-    with open("diabetes_rf_model_fixedn.pkl", "rb") as f:
+    with open("diabetes_rf_model_fixed.pkl", "rb") as f:
         model = pickle.load(f)
 
     if not hasattr(model, "predict"):
