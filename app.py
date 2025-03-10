@@ -1,82 +1,44 @@
 import streamlit as st
-import numpy as np
 import joblib
-import os
-import sklearn
-
-# Ensure compatibility with scikit-learn
-st.sidebar.info(f"Scikit-learn version: {sklearn.__version__}")
+import numpy as np
 
 # Load the trained model
-MODEL_PATH = "diabetes_rf_model.pkl"
+model = joblib.load("diabetes_rf_model.pkl")
 
-def load_model():
-    if os.path.exists(MODEL_PATH):
-        try:
-            return joblib.load(MODEL_PATH)
-        except ValueError:
-            st.error("Model file is incompatible. Try retraining and saving the model with the same scikit-learn version.")
-            return None
-    else:
-        st.error("Model file not found. Please check the file path.")
-        return None
+# Define input fields for user
+st.title("Diabetes Prediction App")
+st.write("Enter the following details to predict diabetes status:")
 
-model = load_model()
+# User inputs
+age = st.number_input("Age", min_value=1, max_value=120, value=40)
+gender = st.selectbox("Gender", ["Male", "Female"])
+polyuria = st.selectbox("Polyuria (Excessive Urination)", ["Yes", "No"])
+polydipsia = st.selectbox("Polydipsia (Excessive Thirst)", ["Yes", "No"])
+sudden_weight_loss = st.selectbox("Sudden Weight Loss", ["Yes", "No"])
+weakness = st.selectbox("Weakness", ["Yes", "No"])
+polyphagia = st.selectbox("Polyphagia (Excessive Hunger)", ["Yes", "No"])
+genital_thrush = st.selectbox("Genital Thrush", ["Yes", "No"])
+visual_blurring = st.selectbox("Visual Blurring", ["Yes", "No"])
+itching = st.selectbox("Itching", ["Yes", "No"])
+irritability = st.selectbox("Irritability", ["Yes", "No"])
+delayed_healing = st.selectbox("Delayed Healing", ["Yes", "No"])
+partial_paresis = st.selectbox("Partial Paresis", ["Yes", "No"])
+muscle_stiffness = st.selectbox("Muscle Stiffness", ["Yes", "No"])
+alopecia = st.selectbox("Alopecia (Hair Loss)", ["Yes", "No"])
+obesity = st.selectbox("Obesity", ["Yes", "No"])
 
-# Define function for prediction
-def predict_diabetes(inputs):
-    if model is None:
-        return "Model not available"
-    try:
-        input_array = np.array(inputs).reshape(1, -1)
-        prediction = model.predict(input_array)
-        return "🩺 Diabetes Detected" if prediction[0] == 1 else "✅ No Diabetes Detected"
-    except Exception as e:
-        return f"Error in prediction: {str(e)}"
+# Encoding user inputs to match model training
+encoding_map = {"Yes": 1, "No": 0, "Male": 1, "Female": 0}
+inputs = [
+    age, encoding_map[gender], encoding_map[polyuria], encoding_map[polydipsia],
+    encoding_map[sudden_weight_loss], encoding_map[weakness], encoding_map[polyphagia],
+    encoding_map[genital_thrush], encoding_map[visual_blurring], encoding_map[itching],
+    encoding_map[irritability], encoding_map[delayed_healing], encoding_map[partial_paresis],
+    encoding_map[muscle_stiffness], encoding_map[alopecia], encoding_map[obesity]
+]
 
-# Streamlit UI
-st.title("🩺 Early Diabetes Prediction App")
-st.write("Enter patient details below to predict the likelihood of diabetes.")
-
-# Sidebar Input Fields
-st.sidebar.header("Patient Details")
-age = st.sidebar.slider("Age", 16, 90, 30)
-gender = st.sidebar.radio("Gender", ("Male", "Female"))
-
-# Symptoms input
-symptoms = {
-    "Polyuria (Excessive Urination)": st.sidebar.radio("Polyuria", ("Yes", "No")),
-    "Polydipsia (Excessive Thirst)": st.sidebar.radio("Polydipsia", ("Yes", "No")),
-    "Sudden Weight Loss": st.sidebar.radio("Sudden Weight Loss", ("Yes", "No")),
-    "Weakness": st.sidebar.radio("Weakness", ("Yes", "No")),
-    "Polyphagia (Excessive Hunger)": st.sidebar.radio("Polyphagia", ("Yes", "No")),
-    "Genital Thrush": st.sidebar.radio("Genital Thrush", ("Yes", "No")),
-    "Visual Blurring": st.sidebar.radio("Visual Blurring", ("Yes", "No")),
-    "Itching": st.sidebar.radio("Itching", ("Yes", "No")),
-    "Irritability": st.sidebar.radio("Irritability", ("Yes", "No")),
-    "Delayed Healing": st.sidebar.radio("Delayed Healing", ("Yes", "No")),
-    "Partial Paresis": st.sidebar.radio("Partial Paresis", ("Yes", "No")),
-    "Muscle Stiffness": st.sidebar.radio("Muscle Stiffness", ("Yes", "No")),
-    "Alopecia (Hair Loss)": st.sidebar.radio("Alopecia", ("Yes", "No")),
-    "Obesity": st.sidebar.radio("Obesity", ("Yes", "No")),
-}
-
-# Convert categorical inputs to numerical
-user_inputs = [
-    age,
-    1 if gender == "Male" else 0
-] + [1 if symptoms[s] == "Yes" else 0 for s in symptoms]
-
-# Prediction Button
-if st.sidebar.button("Predict Diabetes"):  
-    result = predict_diabetes(user_inputs)
-    st.success(result)
-
-# Displaying information
-st.markdown("---")
-st.markdown("### How does it work?")
-st.write(
-    "This app uses a trained Random Forest model to analyze patient symptoms "
-    "and predict the likelihood of diabetes based on input features. "
-    "Results are based on statistical patterns detected in historical data."
-)
+# Predict button
+tf st.button("Predict"):
+    prediction = model.predict(np.array([inputs]))
+    result = "Positive for Diabetes" if prediction[0] == 1 else "Negative for Diabetes"
+    st.write(f"Prediction: **{result}**")
