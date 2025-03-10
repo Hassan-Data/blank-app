@@ -10,18 +10,17 @@ if not os.path.exists(model_path):
     st.error(f"Model file '{model_path}' not found! Please check the file path.")
     st.stop()
 
-# Load model safely
+# Load the model safely
 try:
-    with open(model_path, "rb") as f:
+    with open("diabetes_rf_model_fixed.pkl", "rb") as f:
         model = pickle.load(f)
 
     if not hasattr(model, "predict"):
-        raise ValueError("Loaded model is not trained properly.")
-    
-    st.success("✅ Model loaded successfully!")
+        raise ValueError("❌ Loaded model is NOT trained properly.")
 
+    st.success("✅ Model loaded successfully!")
 except Exception as e:
-    st.error(f"Error loading model: {e}")
+    st.error(f"❌ Error loading model: {e}")
     st.stop()
 
 # Ensure model is properly loaded
